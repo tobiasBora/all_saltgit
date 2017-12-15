@@ -1,0 +1,52 @@
+* Skeleton git repository
+This folder is a git repository whose aim is to control a whole Master by using only this repository.
+
+** Idea
+When you push to this repo, a git hook will update the following master files and folders:
+
+- the files in =./srv/= will be put in =/srv/=. Beware, do not manually modify the files in =/srv/=, it will be erased at each push !!!
+
+- the files in =./etc_salt_master.d/= will be put in =/etc/salt/master.d/=. Beware, do not manually modify the files in =/etc/salt/master.d/=, it will be erased at each push !!!
+
+** How to setup a new master from scratch
+
+MAKE SURE THAT YOU DON'T HAVE ANY VALUABLE THING IN =/etc/salt/master.d/= and =/srv/= ON THE SERVER, BECAUSE EVERYTHING WILL BE DELETED !!! If you have some stuff inside, then save them and copy them in this repository instead.
+
+
+*** Installation of salt on the server
+
+First install salt :
+: wget -O bootstrap-salt.sh https://bootstrap.saltstack.com
+: sudo sh bootstrap-salt.sh
+
+Then start the master:
+: sudo systemctl enable salt-server
+: sudo systemctl start salt-server
+
+(If you want to add a minion)
+Configure the minion to point to localhost:
+: sudo sed -i 's/^#master:.*$/master: localhost/' /etc/salt/minion
+Start it:
+: sudo systemctl enable salt-minion
+: sudo systemctl start salt-minion
+Check that the id is fine, and change it not:
+: cat /etc/salt/minion_id
+Check the available keys to the server:
+: salt-key -L
+Accept them:
+: salt-key -A
+
+*** Upload the git repository on the server
+
+*** Setup a hook script
+The idea is that when you will push 
+
+
+Create a copy of your (or this) repo in the server:
+TODO
+
+and add a hook to it:
+TODO
+
+Do some modifications on your computer and push them to the server: the files should be uploaded automagiquely in =/etc/salt/master.d/=. Now you just need to apply these changes on the server side !
+
