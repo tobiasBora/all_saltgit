@@ -37,6 +37,9 @@ Accept them:
 : salt-key -A
 
 *** Upload the git repository from the client to the server
+
+[On the client]
+
 Create an empty repository on the server (the user does not really matter):
 : ssh <user>@<server> "git init --bare ~/salt/salt_config.git"
 
@@ -47,14 +50,53 @@ Push the repo to the server:
 : git push --set-upstream saltserver master
 
 *** Setup a hook script
-The idea is that when you will push something to the reposi
 
+[On the server]
 
-Create a copy of your (or this) repo in the server:
-TODO
+The idea is that when you will push something to the repository, a script will update the files in =/etc/salt/master.d/= and =/srv/=. But because the script will modify some files owned by root, we will create a script owned by root that will do the job. So on the server create a file like that:
 
-and add a hook to it:
-TODO
+: sudo mkdir -p /opt/git_hook/
+: sudo touch /opt/git_hook/update_salt_folder.sh
+: sudo chown root.root /opt/git_hook/update_salt_folder.sh
+: sudo chmod 4755 /opt/git_hook/update_salt_folder.sh
 
-Do some modifications on your computer and push them to the server: the files should be uploaded automagiquely in =/etc/salt/master.d/=. Now you just need to apply these changes on the server side !
+Now open this file as root:
+: sudo nano /opt/git_hook/update_salt_folder.sh
+
+and put inside your favorite [[http://gitolite.com/deploy.html][git deploy]] method (if you copy/paste mine, don't forget to change the =<user>= name)!
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+cd /home/<user>/salt/salt_config.git/
+tempdir=$(mktemp -d --tmpdir salt-XXXXXXXXXX)
+git archive master | tar -C "$tempdir" -xf -
+rsync -r --no-p --chown=root:root --chmod=Du=rwx,Dgo=,Fu=rw,Fog= "$tempdir/srv/" /srv/
+rsync -r --no-p --chown=root:root --chmod=Du=rwx,Dgo=rx,Fu=rw,Fog=rx "$tempdir/etc_salt_master.d/" /etc/salt/master.d/
+rm -rf "$tempdir"
+#+END_SRC
+
+*** Call the hook script
+
+[On the server]
+
+The end is close! Now, you just need to modify the hook file to point to your script:
+
+: su <user>
+: cd /home/<user>/salt/salt_config.git/hooks/
+: nano post_receive
+
+and put inside a call to the hook script:
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+/opt/git_hook/update_salt_folder.sh
+#+END_SRC
+
+and make it executable
+: chmod +x post_receive
+
+*** Enjoy !
+Now, you can try it. Just edit on the client the files in =./srv/= and =./etc_salt_master.d/= and push the modifications to the server: the files should be uploaded in the good folder.
+
+Now you just need to apply these changes on the server side as usual !
 
