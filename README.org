@@ -36,10 +36,18 @@ Check the available keys to the server:
 Accept them:
 : salt-key -A
 
-*** Upload the git repository on the server
+*** Upload the git repository from the client to the server
+Create an empty repository on the server (the user does not really matter):
+: ssh <user>@<server> "git init --bare ~/salt/salt_config.git"
+
+Set-up the remote on the client:
+: git remote add saltserver <user>@<server>:salt/salt_config.git
+
+Push the repo to the server:
+: git push --set-upstream saltserver master
 
 *** Setup a hook script
-The idea is that when you will push 
+The idea is that when you will push something to the reposi
 
 
 Create a copy of your (or this) repo in the server:
