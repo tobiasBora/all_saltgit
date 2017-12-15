@@ -48,7 +48,7 @@ Set-up the remote on the client:
 
 Push the repo to the server:
 : git push --set-upstream saltserver master
- 
+
 *** Setup a hook script
 
 [On the server]
