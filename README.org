@@ -67,12 +67,18 @@ and put inside your favorite [[http://gitolite.com/deploy.html][git deploy]] met
 
 #+BEGIN_SRC bash
 #!/usr/bin/env bash
+set -e
 
+# !!!!! Change this line !!!!
 cd /home/<user>/salt/salt_config.git/
 tempdir=$(mktemp -d --tmpdir salt-XXXXXXXXXX)
 git archive master | tar -C "$tempdir" -xf -
-rsync -r --no-p --chown=root:root --chmod=Du=rwx,Dgo=,Fu=rw,Fog= "$tempdir/srv/" /srv/
-rsync -r --no-p --chown=root:root --chmod=Du=rwx,Dgo=rx,Fu=rw,Fog=rx "$tempdir/etc_salt_master.d/" /etc/salt/master.d/
+if [ -e "$tempdir/srv/" ]; then
+    rsync -r --no-p --chown=root:root --chmod=Du=rwx,Dgo=,Fu=rw,Fog= "$tempdir/srv/" /srv/
+fi
+if [ -e "$tempdir/etc_salt_master.d/" ]; then
+    rsync -r --no-p --chown=root:root --chmod=Du=rwx,Dgo=rx,Fu=rw,Fog=rx "$tempdir/etc_salt_master.d/" /etc/salt/master.d/
+fi
 rm -rf "$tempdir"
 #+END_SRC
 
@@ -82,9 +88,8 @@ rm -rf "$tempdir"
 
 The end is close! Now, you just need to modify the hook file to point to your script:
 
-: su <user>
 : cd /home/<user>/salt/salt_config.git/hooks/
-: nano post_receive
+: nano post-receive
 
 and put inside a call to the hook script:
 #+BEGIN_SRC bash
