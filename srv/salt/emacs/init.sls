@@ -1,0 +1,3 @@
+emacs-nox:
+  pkg:
+      - installed
