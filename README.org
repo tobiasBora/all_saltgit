@@ -104,4 +104,3 @@ and make it executable
 Now, you can try it. Just edit on the client the files in =./srv/= and =./etc_salt_master.d/= and push the modifications to the server: the files should be uploaded in the good folder.
 
 Now you just need to apply these changes on the server side as usual !
-
