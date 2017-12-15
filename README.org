@@ -15,8 +15,8 @@ MAKE SURE THAT YOU DON'T HAVE ANY VALUABLE THING IN =/etc/salt/master.d/= and =/
 
 *** Installation of salt on the server
 
-First make sure you have =sudo= installed:
-: apt install sudo
+First make sure you have =sudo= installed and =rsync=, it will be useful later:
+: apt install sudo rsync
 
 First install salt :
 : wget -O bootstrap-salt.sh https://bootstrap.saltstack.com
@@ -121,4 +121,3 @@ To run only one SLS formula:
 : salt '*' state.apply emacs
 
 NB: You can add this command at the end of the =/opt/git_hook/update_salt_folder.sh= folder, and as a consequence everytime you push a commit it will be applied. But please note that the ssh command won't be close until the =state.apply= command be finished.
-
