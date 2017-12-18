@@ -396,5 +396,5 @@ echo "  $ git remote add saltserver ${gituser}_${serveraddr}_${port}:/${pathgitr
 echo ""
 echo "And to push the master branch the the saltserver remote:"
 echo "  $ git push --set-upstream saltserver master"
-echo ""
+echo " "
 echo "Enjoy !"
