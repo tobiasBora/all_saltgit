@@ -22,12 +22,12 @@ First install salt :
 : wget -O bootstrap-salt.sh https://bootstrap.saltstack.com
 : sudo sh bootstrap-salt.sh -M
 
-Then start the master:
+Then enable the `.conf`
+: sudo sed -i 's@^#default_include: master.d/\*.conf$@default_include: master.d/\*.conf@' /etc/salt/master
+
+And start the master:
 : sudo systemctl enable salt-server
 : sudo systemctl start salt-server
-
-and enable the `.conf`
-: sudo sed -i 's@^#default_include: master.d/\*.conf$@default_include: master.d/\*.conf@' /etc/salt/master
 
 (If you want to add a minion)
 Configure the minion to point to localhost:
@@ -37,7 +37,7 @@ Start it:
 : sudo systemctl start salt-minion
 Check that the id is fine, and change it not:
 : cat /etc/salt/minion_id
-Check the available keys to the server:
+Check the keys available to the server:
 : salt-key -L
 Accept them:
 : salt-key -A
