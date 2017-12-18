@@ -8,10 +8,28 @@ When you push to this repo, a git hook will update the following master files an
 
 - the files in =./etc_salt_master.d/= will be put in =/etc/salt/master.d/=. Beware, do not manually modify the files in =/etc/salt/master.d/=, it will be erased at each push !!!
 
-** How to setup a new master from scratch
+** The automatic, one-line solution
 
-MAKE SURE THAT YOU DON'T HAVE ANY VALUABLE THING IN =/etc/salt/master.d/= and =/srv/= ON THE SERVER, BECAUSE EVERYTHING WILL BE DELETED !!! If you have some stuff inside, then save them and copy them in this repository instead.
+MAKE SURE THAT YOU DON'T HAVE ANY VALUABLE THING IN =/etc/salt/master.d/= and =/srv/= ON THE SERVER, BECAUSE EVERYTHING IS LIKELY TO BE DELETED !!! If it contains some code, just backup it, and place it on this repo in the folder =./srv/=, and =git add= this folder. It will be added back to the server when you will push the modifications later!
 
+To apply my one-line solution, just run the interactive script:
+
+: ./bootstrap_saltgit_server.sh
+
+and answer the questions. This script always asks you before doing anything, so it shouldn't be dangerous. If needed, it will connect to the server though ssh, install the minion and master, enable and start them, create a special user for it, create the git repository and the hook files. It has been tested on a fresh debian stable distribution, with only bash and openssh installed.
+
+Then, at the end you will have a text explaining what command you need to run on the clients to sync them with the server, but il will be basically only a remote configuration:
+
+: git remote add saltserver ssh://<git user>@<server>:<port>/<git repo path>
+: git push --set-upstream saltserver master"
+
+Enjoy !
+
+** The manual, longer solution
+
+MAKE SURE THAT YOU DON'T HAVE ANY VALUABLE THING IN =/etc/salt/master.d/= and =/srv/= ON THE SERVER, BECAUSE EVERYTHING IS LIKELY TO BE DELETED !!! If it contains some code, just backup it, and place it on this repo in the folder =./srv/=, and =git add= this folder. It will be added back to the server when you will push the modifications later!
+
+If you don't like scripts, you can manually do what the script does. Here is basiquely what the script does:
 
 *** Installation of salt on the server
 
@@ -46,7 +64,7 @@ Accept them:
 
 [On the client]
 
-Create an empty repository on the server (the user does not really matter):
+Create an empty repository on the server (the user does not really matter, my script create a new user for that named =git= by default):
 : ssh <user>@<server> "git init --bare ~/salt/salt_config.git"
 
 Set-up the remote on the client:
