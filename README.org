@@ -8,6 +8,8 @@ When you push to this repo, a git hook will update the following master files an
 
 - the files in =./etc_salt_master.d/= will be put in =/etc/salt/master.d/=. Beware, do not manually modify the files in =/etc/salt/master.d/=, it will be erased at each push !!!
 
+Why don't I just use the gitfs file backend? Just because it's not yet [[https://github.com/saltstack/salt/issues/11724][supported]] !
+
 ** The automatic, one-line solution
 
 MAKE SURE THAT YOU DON'T HAVE ANY VALUABLE THING IN =/etc/salt/master.d/= and =/srv/= ON THE SERVER, BECAUSE EVERYTHING IS LIKELY TO BE DELETED !!! If it contains some code, just backup it, and place it on this repo in the folder =./srv/=, and =git add= this folder. It will be added back to the server when you will push the modifications later!
@@ -22,6 +24,14 @@ Then, at the end you will have a text explaining what command you need to run on
 
 : git remote add saltserver ssh://<git user>@<server>:<port>/<git repo path>
 : git push --set-upstream saltserver master"
+
+And as usually, you can run on the server side the following code to take it into account:
+
+: salt '*' state.apply
+
+If you changed the master configuration files, you may also want to restart the server:
+
+: systemctl restart salt-master
 
 Enjoy !
 
