@@ -29,14 +29,47 @@ And as usually, you can run on the server side the following code to take it int
 
 : salt '*' state.apply
 
-If you changed the master configuration files, you may also want to restart the server:
+If you changed the master configuration files, you may also want to restart the server before:
 
 : systemctl restart salt-master
 
 Enjoy !
 
-** The manual, longer solution
+** Can I automatiquely run state.apply after pushing?
 
+Sure, just edit the =/opt/git_hook/update_salt_folder.sh= file by adding at the end:
+
+: systemctl restart salt-master
+: salt '*' state.apply
+
+But be aware that when you will push your modifications, 
+
+** Once I bootstraped the node, can I come back to gitfs to deal with the server configuration?
+
+Sure. You can even use the same repository if you want by putting your gitfs folder in a new folder. Then you just need to edit for example the file =etc_salt_master.d/auto.conf= and add your gitfs inside!
+
+** I'm too lazy to create a new git repository, can I use this git repository as my skeleton?
+
+Ahah sure. Just don't forget to remove your sensitive data if you want to do a pull request on my repo ;-)
+
+** Can I use a repository on a distant website (github/gitlab/...) instead of using a local repository?
+
+Yes you can, you just need to edit the file =/opt/git_hook/update_salt_folder.sh= to point to the online version by changing the :
+
+: git archive master | ...
+
+into
+
+: git archive --remote=https://your_online_project.git master
+
+You just need to know that there are a few drawbacks to this solution:
+- The first one is that because the git server is distant, your local server won't be notified when a change will occur on the server. So you will need to manually run the script =/opt/git_hook/update_salt_folder.sh= to update your local salt tree, and you won't be able to rely on the "hook" trick. But I guess it's not that difficult, you can even add an alias that run this script and =salt '*' state.apply= at the same time.
+- The second thing is that you made my script pretty useless. Indeed, most of the code is used to create the local git user, and configure the hook file. So instead of running the whole script, I guess it's better to just follow the section "Setup a hook script" from the next section "(The manual, longer solution)", and edit it the same way.
+
+** (The manual, longer solution) I don't trust your script, can I do it by myselft?
+
+Sure, here is a rough description of what the script does!
+ 
 MAKE SURE THAT YOU DON'T HAVE ANY VALUABLE THING IN =/etc/salt/master.d/= and =/srv/= ON THE SERVER, BECAUSE EVERYTHING IS LIKELY TO BE DELETED !!! If it contains some code, just backup it, and place it on this repo in the folder =./srv/=, and =git add= this folder. It will be added back to the server when you will push the modifications later!
 
 If you don't like scripts, you can manually do what the script does. Here is basiquely what the script does:
