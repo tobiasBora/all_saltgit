@@ -8,7 +8,7 @@ When you push to this repo, a git hook will update the following master files an
 
 - the files in =./etc_salt_master.d/= will be put in =/etc/salt/master.d/=. Beware, do not manually modify the files in =/etc/salt/master.d/=, it will be erased at each push !!!
 
-Why don't I just use the gitfs file backend? Just because it's not yet [[https://github.com/saltstack/salt/issues/11724][supported]] !
+Why don't I just use the gitfs file backend? Just because it's [[https://github.com/saltstack/salt/issues/11724][not yet supported]] ! If you are looking for a script written by people more professional, you may want to give a look to [[https://github.com/saltstack/salt/pull/44812][this project]].
 
 ** The automatic, one-line solution
 
